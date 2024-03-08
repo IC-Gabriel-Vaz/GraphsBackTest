@@ -1,12 +1,24 @@
 import sqlite3
 import pandas as pd
 
-conn = sqlite3.connect("C:/Users/gabri/Simulador/PortSim/portSimMarketData.sqlite")
+import get_assets 
 
-query = "SELECT * FROM AssetPrice;"
+def get_prices(app):
 
-df = pd.read_sql_query(query, conn)
+    conn = sqlite3.connect("C:/Users/gabri/Simulador/PortSim/portSimMarketData.sqlite")
 
-conn.close()
+    query = 'SELECT * FROM AssetPrice'
 
-print(df.columns)
+    df = pd.read_sql_query(query, conn)
+
+    assets = get_assets.get_assets(app)
+
+    for asset in assets:
+        
+        df_asset_prices = df.loc[df['asset'] == asset]
+
+        print(df_asset_prices)
+
+
+if __name__ == '__main__':
+    get_prices('IBOV')
