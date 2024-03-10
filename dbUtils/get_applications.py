@@ -13,6 +13,8 @@ def get_applications():
 
     applications = df['app'].unique()
 
+    print(applications)
+
     return applications
 
 if __name__ == '__main__':

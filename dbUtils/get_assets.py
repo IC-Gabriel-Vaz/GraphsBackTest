@@ -12,7 +12,8 @@ def get_assets(app):
     df = df.loc[df['app'] == app]
 
     df_assets = df['asset']
-
+    print(df_assets)
+    
     conn.close()
 
     return df_assets

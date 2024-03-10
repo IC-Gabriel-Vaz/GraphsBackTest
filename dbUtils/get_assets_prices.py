@@ -37,6 +37,8 @@ def get_prices(app):
 
     merged_df = pd.concat(df_asset_prices, axis=1, join='outer')
     merged_df.sort_index()
+    merged_df.fillna(0, inplace = True)
+
 
     print(merged_df)
 
