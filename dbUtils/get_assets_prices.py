@@ -28,7 +28,6 @@ def get_prices(app):
     for df in df_asset_prices:
         df.index = pd.to_datetime(df.index)
 
-    # Ordenar os DataFrames pela data do índice
     for df in df_asset_prices:
         df.sort_index(inplace=True)
     
@@ -37,7 +36,6 @@ def get_prices(app):
 
     merged_df = pd.concat(df_asset_prices, axis=1, join='outer')
     merged_df.sort_index()
-    merged_df.fillna(0, inplace = True)
 
 
     print(merged_df)
