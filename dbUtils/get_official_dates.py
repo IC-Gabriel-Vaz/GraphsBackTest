@@ -1,11 +1,16 @@
 import pandas as pd
 import get_assets_prices
+import sqlite3
 
 def official_dates(app):
 
-    prices_df = get_assets_prices.get_prices(app)
+    conn = sqlite3.connect("C:/Users/gabri/Simulador/PortSim/portSimMarketData.sqlite")
 
-    official_dates = prices_df.dropna(subset=['BOVA11']).index.to_list()
+    query = "SELECT * FROM AssetPrice"
+
+    df = pd.read_sql(query, conn)
+
+    
 
     print(official_dates)
 

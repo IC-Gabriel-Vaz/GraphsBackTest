@@ -13,8 +13,8 @@ def get_assets(app):
 
     df_assets = df['asset']
     
-    for asset in df_assets:
-        print(asset)
+    # for asset in df_assets:
+    #     print(asset)
     
     conn.close()
 
