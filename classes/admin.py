@@ -9,7 +9,7 @@ class Admin:
     def connect(self):
         try:
             self.connection= sqlite3.connect(self.db_path)
-            print("Conexão com a Base de Dados estabelecida!")
+            print("Conexão com a Base de Dados estabelecida! \n")
         except sqlite3.Error as e:
             print(f"Erro ao conectar ao banco de dados: {e}")
     

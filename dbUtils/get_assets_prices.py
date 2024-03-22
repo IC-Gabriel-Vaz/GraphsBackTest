@@ -11,9 +11,9 @@ def get_prices(app, adm):
     query = 'SELECT * FROM AssetPrice'
 
     df = pd.read_sql_query(query, conn)
-    print(df)
+    #print(df)
     assets = get_assets.get_assets(app,adm)
-    print(assets)
+    #print(assets)
     df_asset_prices = []
 
     for asset in assets:
@@ -38,8 +38,8 @@ def get_prices(app, adm):
     merged_df = pd.concat(df_asset_prices, axis=1, join='outer')
     merged_df.sort_index()
 
-
-    official_dates = merged_df.dropna(subset=['BOVA11']).index.to_list()
+    if app == 'IBOV':
+        official_dates = merged_df.dropna(subset=['BOVA11']).index.to_list()
 
     merged_df = merged_df.loc[official_dates]
 
@@ -52,9 +52,7 @@ def get_prices(app, adm):
     merged_df = merged_df.ffill()
     merged_df =  merged_df.bfill()
 
-    print(merged_df)
+    #print(merged_df)
+
 
     return merged_df
-
-if __name__ == '__main__':
-    get_prices('IBOV')
