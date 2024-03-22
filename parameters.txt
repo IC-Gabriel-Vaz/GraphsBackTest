@@ -1,0 +1,2 @@
+databasePath = "C:/Users/gabri/Simulador/PortSim/portSimMarketData.sqlite"
+app = IBOV

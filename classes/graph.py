@@ -6,11 +6,8 @@ import dbUtils.get_assets as assets
 
 class Graph:
 
-    def __init__(self,app):
+    def __init__(self,Data):
 
-        self.prices =  pcs.get_prices(app)
-        self.returns = ret.get_returns(app)
-        self._app = app
         self.corr_matrix = self.returns.corr()
     
     def create_graph(self):

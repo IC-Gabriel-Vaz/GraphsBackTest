@@ -4,15 +4,16 @@ import pandas as pd
 import get_official_dates
 import get_assets 
 
-def get_prices(app):
+def get_prices(app, adm):
 
-    conn = sqlite3.connect("C:/Users/gabri/Simulador/PortSim/portSimMarketData.sqlite")
+    conn = adm.connection
 
     query = 'SELECT * FROM AssetPrice'
 
     df = pd.read_sql_query(query, conn)
-
-    assets = get_assets.get_assets(app)
+    print(df)
+    assets = get_assets.get_assets(app,adm)
+    print(assets)
     df_asset_prices = []
 
     for asset in assets:
@@ -32,6 +33,7 @@ def get_prices(app):
     for df in df_asset_prices:
         df.sort_index(inplace=True)
     
+    ##print(df_asset_prices)
 
     merged_df = pd.concat(df_asset_prices, axis=1, join='outer')
     merged_df.sort_index()

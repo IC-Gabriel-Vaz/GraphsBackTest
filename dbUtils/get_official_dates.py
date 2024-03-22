@@ -2,7 +2,7 @@ import pandas as pd
 import get_assets_prices
 import sqlite3
 
-def official_dates(app):
+def official_dates(db ,app):
 
     conn = sqlite3.connect("C:/Users/gabri/Simulador/PortSim/portSimMarketData.sqlite")
 
