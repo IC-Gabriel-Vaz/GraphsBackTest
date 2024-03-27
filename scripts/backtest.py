@@ -35,7 +35,7 @@ if __name__ == '__main__':
 
     returns = prices.pct_change().dropna()
 
-    simulation = Simulation()
+    simulation = Simulation(investiment)
 
 
     if app == 'IBOV':
@@ -45,21 +45,21 @@ if __name__ == '__main__':
     results = []
     weights = {}
 
-    assets = ga.get_assets(app, adm)
+    assets = prices.columns
 
     for asset in assets:
 
         weights[asset] = 1/len(assets)
-
 
     while i < len(official_dates):
 
         print('****** Rebalacing ****** \n')
 
         sequency = official_dates[i: i + rebalance_frequency]
-        prices.loc[pd.to_datetime(sequency)]
+        rebalance_prices = prices.loc[pd.to_datetime(sequency)]
+        print(rebalance_prices)
 
-        result = simulation.backtest_portfolio(weights, prices, investiment)
+        result = simulation.backtest_portfolio(weights, rebalance_prices)
         results.append(result)
 
         i += rebalance_frequency
