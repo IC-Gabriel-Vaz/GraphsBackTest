@@ -10,10 +10,12 @@ class Simulation:
     def calculate_portfolio_value(self,weights, prices):
 
         self.portfolio_value = 0
+        #print(prices)
         for asset, weight in weights.items():
-            asset_price = prices[asset][-1]
-            asset_value = asset_price * weight
-            portfolio_value += asset_value
+            print(prices[asset])
+            # asset_price = prices[asset][0]
+            # asset_value = asset_price * weight
+            # self.portfolio_value += asset_value
         
         return self.portfolio_value
     

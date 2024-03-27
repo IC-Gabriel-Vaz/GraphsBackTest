@@ -9,6 +9,7 @@ import read_txt
 from admin import Admin
 import get_assets_prices as gp
 from simulation import Simulation
+import get_assets as ga
 
 if __name__ == '__main__':
 
@@ -17,7 +18,8 @@ if __name__ == '__main__':
     db_path = parameters['databasePath']
     initial_date = parameters['start_date']
     end_date = parameters['end_date']
-    rebalance = int(parameters['rebalance'])
+    rebalance_frequency = int(parameters['rebalance'])
+    investiment = int(parameters['investiment'])
 
     initial_date = datetime.strptime(initial_date, "%Y-%m-%d")
     end_date = datetime.strptime(end_date, "%Y-%m-%d")
@@ -30,21 +32,37 @@ if __name__ == '__main__':
     print('Carregando Dados ... \n')
     
     prices = gp.get_prices(app , adm)
-    #print(prices)
 
     returns = prices.pct_change().dropna()
-    print(returns.loc[date + timedelta(days=1)])
-
-    print('Dados carregados com sucesso \n')
 
     simulation = Simulation()
 
-    # while date != end_date:
-    #     dates = []
-    #     for i in range(rebalance):
-    #         current_date = date + timedelta(days=1)
-    #         dates.append(current_date)
-        
-    #     simulation_returns = returns.loc[returns.index.isin(dates)]
-    #     print(simulation_returns)
-    #     date += timedelta(days=100)
+
+    if app == 'IBOV':
+        official_dates = returns.dropna(subset=['BOVA11']).index.to_list()
+    
+    i = 0
+    results = []
+    weights = {}
+
+    assets = ga.get_assets(app, adm)
+
+    for asset in assets:
+
+        weights[asset] = 1/len(assets)
+
+
+    while i < len(official_dates):
+
+        print('****** Rebalacing ****** \n')
+
+        sequency = official_dates[i: i + rebalance_frequency]
+        prices.loc[pd.to_datetime(sequency)]
+
+        result = simulation.backtest_portfolio(weights, prices, investiment)
+        results.append(result)
+
+        i += rebalance_frequency
+
+    for df in results:
+        print(df)

@@ -1,7 +1,5 @@
-import sqlite3
 import pandas as pd
 
-import get_official_dates
 import get_assets 
 
 def get_prices(app, adm):
@@ -34,9 +32,10 @@ def get_prices(app, adm):
         df.sort_index(inplace=True)
     
     ##print(df_asset_prices)
-
+        
     merged_df = pd.concat(df_asset_prices, axis=1, join='outer')
-    merged_df.sort_index()
+
+    merged_df = merged_df.sort_index()
 
     if app == 'IBOV':
         official_dates = merged_df.dropna(subset=['BOVA11']).index.to_list()
