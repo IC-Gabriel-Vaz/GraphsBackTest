@@ -57,12 +57,15 @@ if __name__ == '__main__':
 
         sequency = official_dates[i: i + rebalance_frequency]
         rebalance_prices = prices.loc[pd.to_datetime(sequency)]
-        print(rebalance_prices)
+        #print(rebalance_prices)
 
         result = simulation.backtest_portfolio(weights, rebalance_prices)
         results.append(result)
 
         i += rebalance_frequency
 
-    for df in results:
-        print(df)
+    print('Simulação Finalizada \n')
+    #print(f'Valor final do Portfólio: {simulation.portfolio_values[-1]} \n')
+    print(simulation.portfolio_values)
+
+    
