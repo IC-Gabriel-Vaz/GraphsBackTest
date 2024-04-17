@@ -10,10 +10,13 @@ from admin import Admin
 import get_assets_prices as gp
 from simulation import Simulation
 import get_assets as ga
+import argParse
 
 if __name__ == '__main__':
 
-    parameters = read_txt.read_txt('C:/Users/gabri/ICDev/GraphsBackTest/parameters.txt')
+    parameters = argParse.argParse()
+    #print(parameters)
+    
     app = parameters['app']
     db_path = parameters['databasePath']
     initial_date = parameters['start_date']

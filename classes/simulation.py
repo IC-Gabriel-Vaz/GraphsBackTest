@@ -34,7 +34,7 @@ class Simulation:
         for value in amount_per_asset:
             shares = value/prices.iloc[0][i]
             i +=1
-            shares = math.floor(shares)
+            #shares = math.floor(shares)
             shares_per_asset.append(shares)
         
         #print(shares_per_asset)
@@ -47,3 +47,6 @@ class Simulation:
             self.portfolio_values.loc[index] = current_portfolio_value
 
         return self.portfolio_values
+    
+
+    # Considerar ações fracionárias
