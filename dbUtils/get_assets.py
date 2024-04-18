@@ -19,4 +19,3 @@ def get_assets(app,adm):
     
 
     return df_assets
-

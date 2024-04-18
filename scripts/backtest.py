@@ -1,71 +1,66 @@
 import pandas as pd
 import sys
 from datetime import datetime , timedelta
+import argParse
 
 sys.path.append("../classes")
 sys.path.append('../dbUtils')
 
-import read_txt
+
+############ Classes ##############
 from admin import Admin
-import get_assets_prices as gp
 from simulation import Simulation
+from data import Data
+###################################
+
+########### Functions #############
+import read_txt
+import get_assets_prices as gp
 import get_assets as ga
 import argParse
+import manage_parameters as mp
+import manage_data as md
+###################################
+
 
 if __name__ == '__main__':
 
-    parameters = argParse.argParse()
+    txt = argParse.argParse()
     #print(parameters)
-    
-    app = parameters['app']
-    db_path = parameters['databasePath']
-    initial_date = parameters['start_date']
-    end_date = parameters['end_date']
-    rebalance_frequency = int(parameters['rebalance'])
-    investiment = int(parameters['investiment'])
 
-    initial_date = datetime.strptime(initial_date, "%Y-%m-%d")
-    end_date = datetime.strptime(end_date, "%Y-%m-%d")
+    parameters = mp.gettxt(txt)
 
-    date = initial_date
-
-    adm = Admin(db_path)
+    adm = Admin(parameters.db_path)
     adm.connect()
 
     print('Carregando Dados ... \n')
+
+    data = md.get_data(adm,parameters)
     
-    prices = gp.get_prices(app , adm)
+    simulation = Simulation(parameters.investiment)
 
-    returns = prices.pct_change().dropna()
-
-    simulation = Simulation(investiment)
-
-
-    if app == 'IBOV':
-        official_dates = returns.dropna(subset=['BOVA11']).index.to_list()
-    
     i = 0
     results = []
     weights = {}
 
-    assets = prices.columns
+    data.assets = data.prices.columns
 
-    for asset in assets:
+    for asset in data.assets:
 
-        weights[asset] = 1/len(assets)
+        weights[asset] = 1/len(data.assets)
 
-    while i < len(official_dates):
+    while i < len(data.official_dates):
 
         print('****** Rebalacing ****** \n')
 
-        sequency = official_dates[i: i + rebalance_frequency]
-        rebalance_prices = prices.loc[pd.to_datetime(sequency)]
+        sequency = data.official_dates[i: i + parameters.rebalance_frequency]
+        rebalance_prices = data.prices.loc[pd.to_datetime(sequency)]
         #print(rebalance_prices)
 
         result = simulation.backtest_portfolio(weights, rebalance_prices)
         results.append(result)
 
-        i += rebalance_frequency
+        i += parameters.rebalance_frequency
 
     print('Simulação Finalizada \n')
     #print(f'Valor final do Portfólio: {simulation.portfolio_values[-1]} \n')
