@@ -1,6 +1,6 @@
 databasePath = "C:/Users/gabri/Simulador/PortSim/portSimMarketData.sqlite"
 app = IBOV
-date1 = 2013-03-05
-date2 = 2013-03-25
+date1 = 2013-03-09
+date2 = 2013-03-29
 rebalance = 20
-investiment = 100000
+investment = 100000

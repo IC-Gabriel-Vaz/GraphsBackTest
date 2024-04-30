@@ -11,6 +11,7 @@ sys.path.append('../dbUtils')
 from admin import Admin
 from simulation import Simulation
 from data import Data
+from parameters import Parameters
 ###################################
 
 ########### Functions #############
@@ -18,8 +19,7 @@ import read_txt
 import get_assets_prices as gp
 import get_assets as ga
 import argParse
-import manage_parameters as mp
-import manage_data as md
+
 ###################################
 
 
@@ -28,17 +28,17 @@ if __name__ == '__main__':
     txt = argParse.argParse()
     #print(parameters)
 
-    parameters = mp.gettxt(txt)
+    parameters = Parameters(txt)
 
     adm = Admin(parameters.db_path)
     adm.connect()
 
-    print('Carregando Dados ... \n')
+    print('Loading Data ... \n')
 
-    data = md.get_data(adm,parameters)
-    
-    simulation = Simulation(parameters.investiment)
+    data = Data(parameters,adm)
 
+    simulation = Simulation(parameters, data)
+    print(simulation.shares)
     i = 0
     results = []
     weights = {}
@@ -51,8 +51,7 @@ if __name__ == '__main__':
 
     while i < len(data.in_Sample_dates):
 
-        print('****** Rebalacing ****** \n')
-
+        print('************* Rebalacing ************ \n')
         sequency = data.official_dates[i: i + parameters.rebalance_frequency]
         rebalance_prices = data.prices.loc[pd.to_datetime(sequency)]
         #print(rebalance_prices)
@@ -65,8 +64,5 @@ if __name__ == '__main__':
     print('Simulação Finalizada \n')
     #print(f'Valor final do Portfólio: {simulation.portfolio_values[-1]} \n')
     print(simulation.portfolio_values)
-
-    print(data.in_Sample_dates)
-    print(data.out_of_Sample_dates)
 
     
