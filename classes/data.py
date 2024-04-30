@@ -9,6 +9,8 @@ class Data:
         self.official_dates = None
         self.assets = None
         self.date = None
+        self.in_Sample_dates = None
+        self.out_of_Sample_dates = None
 
     def get_official_dates(self,app):
 
@@ -17,3 +19,17 @@ class Data:
 
         return self.official_dates
     
+    def get_simulation_dates(self,parameters):
+
+        print(self.official_dates)
+        index_date1 = self.official_dates.index(parameters.date1)
+        index_date2 = self.official_dates.index(parameters.date2)
+
+        self.in_Sample_dates = self.official_dates[:index_date1+1]
+        self.out_of_Sample_dates = self.official_dates[index_date1+1:index_date2+1]
+
+        return self.in_Sample_dates, self.out_of_Sample_dates
+    
+
+
+

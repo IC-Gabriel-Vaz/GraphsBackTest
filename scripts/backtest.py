@@ -49,7 +49,7 @@ if __name__ == '__main__':
 
         weights[asset] = 1/len(data.assets)
 
-    while i < len(data.official_dates):
+    while i < len(data.in_Sample_dates):
 
         print('****** Rebalacing ****** \n')
 
@@ -65,5 +65,8 @@ if __name__ == '__main__':
     print('Simulação Finalizada \n')
     #print(f'Valor final do Portfólio: {simulation.portfolio_values[-1]} \n')
     print(simulation.portfolio_values)
+
+    print(data.in_Sample_dates)
+    print(data.out_of_Sample_dates)
 
     

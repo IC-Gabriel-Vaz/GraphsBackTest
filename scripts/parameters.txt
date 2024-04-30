@@ -1,8 +1,6 @@
 databasePath = "C:/Users/gabri/Simulador/PortSim/portSimMarketData.sqlite"
 app = IBOV
-in_sample_initial_date = 2019-01-01
-in_sample_end_date = 2015-12-01
-out_of_sample_initial_date = 2015-12-02
-out_of_sample_end_date = 2023-03-01
+date1 = 2013-03-05
+date2 = 2013-03-25
 rebalance = 20
 investiment = 100000

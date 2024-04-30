@@ -26,23 +26,17 @@ def gettxt(txt):
 
     parameters.db_path = txt['databasePath']
 
-    in_sample_initial_date = txt['in_sample_initial_date']
+    date1 = txt['date1']
 
-    in_sample_end_date = txt['in_sample_end_date']
-
-    out_of_sample_initial_date = txt['out_of_sample_initial_date']
-
-    out_of_sample_end_date = txt['out_of_sample_end_date']
+    date2 = txt['date2']
 
     parameters.rebalance_frequency = int(txt['rebalance'])
 
     parameters.investiment = int(txt['investiment'])
 
-    parameters.in_sample_initial_date = datetime.strptime(in_sample_initial_date, "%Y-%m-%d")
-    parameters.in_sample_end_date = datetime.strptime(in_sample_end_date, "%Y-%m-%d")
-    parameters.out_of_sample_initial_date = datetime.strptime(out_of_sample_initial_date, "%Y-%m-%d")
-    parameters.out_of_sample_end_date = datetime.strptime(out_of_sample_end_date, "%Y-%m-%d")
-
+    parameters.date1 = datetime.strptime(date1, "%Y-%m-%d")
+    parameters.date2 = datetime.strptime(date2, "%Y-%m-%d")
+    
     # parameters.date = in_sample_initial_date
 
     # parameters.prices = gp.get_prices(parameters.app , parameters.adm)
