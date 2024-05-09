@@ -38,7 +38,7 @@ if __name__ == '__main__':
     data = Data(parameters,adm)
 
     simulation = Simulation(parameters, data)
-    print(simulation.shares)
+    #print(simulation.shares)
     i = 0
     results = []
     weights = {}
@@ -56,7 +56,7 @@ if __name__ == '__main__':
         rebalance_prices = data.prices.loc[pd.to_datetime(sequency)]
         #print(rebalance_prices)
 
-        result = simulation.backtest_portfolio(weights, rebalance_prices)
+        result = simulation.backtest_portfolio(weights, rebalance_prices,sequency)
         results.append(result)
 
         i += parameters.rebalance_frequency
@@ -64,5 +64,6 @@ if __name__ == '__main__':
     print('Simulação Finalizada \n')
     #print(f'Valor final do Portfólio: {simulation.portfolio_values[-1]} \n')
     print(simulation.portfolio_values)
+    print(simulation.valuation_history)
 
     
