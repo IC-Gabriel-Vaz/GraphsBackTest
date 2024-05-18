@@ -1,16 +1,15 @@
 import pandas as pd
+import get_assets
 
-import get_assets as get_assets 
-
-def get_prices(app, adm):
+def get_simulation_prices(parameters, adm):
 
     conn = adm.connection
 
     query = 'SELECT * FROM AssetPrice'
 
     df = pd.read_sql_query(query, conn)
-    #print(df)
-    assets = get_assets.get_assets(app,adm)
+    print(df)
+    assets = get_assets.get_assets(parameters.app,adm)
     #print(assets)
     df_asset_prices = []
 
@@ -37,21 +36,6 @@ def get_prices(app, adm):
 
     merged_df = merged_df.sort_index()
 
-    if app == 'IBOV':
-        official_dates = merged_df.dropna(subset=['BOVA11']).index.to_list()
-
-    merged_df = merged_df.loc[official_dates]
-
-    colunas_para_remover = merged_df.columns[merged_df.isna().sum() >= 1802]
-    colunas_para_remover.to_list()
-
-    for ativo in colunas_para_remover:
-        del merged_df[ativo]
-
-    merged_df = merged_df.ffill()
-    merged_df =  merged_df.bfill()
-
-    #print(merged_df)
-
+    print(merged_df)
 
     return merged_df

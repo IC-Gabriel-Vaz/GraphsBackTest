@@ -4,7 +4,7 @@ class Admin:
 
     def __init__(self, db_path):
         self.db_path = db_path
-        #self.connection = None
+        self.connection = None
 
     def connect(self):
         try:

@@ -1,7 +1,7 @@
 import pandas as pd
 import sys
 from datetime import datetime , timedelta
-import argParse
+import New.argParse as argParse
 
 sys.path.append("../classes")
 sys.path.append('../dbUtils')
@@ -15,10 +15,10 @@ from parameters import Parameters
 ###################################
 
 ########### Functions #############
-import read_txt
+import New.read_txt as read_txt
 import get_assets_prices as gp
 import get_assets as ga
-import argParse
+import New.argParse as argParse
 
 ###################################
 

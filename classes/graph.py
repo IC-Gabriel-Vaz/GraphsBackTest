@@ -2,7 +2,7 @@ import pandas as pd
 import networkx as nx
 import dbUtils.get_assets_prices as pcs 
 import dbUtils.get_returns as ret
-import dbUtils.get_assets as assets
+import scripts.get_assets as assets
 
 class Graph:
 

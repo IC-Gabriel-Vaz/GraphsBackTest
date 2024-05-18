@@ -9,7 +9,6 @@ def get_assets(app,adm):
 
     df = pd.read_sql_query(query, conn)
 
-    
     df = df.loc[df['app'] == app]
 
     df_assets = df['asset']

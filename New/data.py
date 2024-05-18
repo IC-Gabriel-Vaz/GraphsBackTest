@@ -1,18 +1,15 @@
 import pandas as pd
 import sys
 
-sys.path.append("../classes")
-sys.path.append('../dbUtils')
+import get_sim_prices as gp
 
-import get_assets_prices as gp
-import get_assets as ga
 
 class Data:
 
     def __init__(self,parameters,adm):
 
-        self.prices  = gp.get_prices(parameters.app , adm)
-        self.returns = self.prices.pct_change().dropna()
+        self.prices  = gp.get_simulation_prices(parameters , adm)
+        self.returns = None
         self.official_dates = self.get_official_dates(parameters.app)
         self.assets = self.prices.columns
         self.date = None
@@ -22,7 +19,7 @@ class Data:
     def get_official_dates(self,app):
 
         if app == 'IBOV':
-            self.official_dates = self.returns.dropna(subset=['BOVA11']).index.to_list()
+            self.official_dates = self.prices.dropna(subset=['BOVA11']).index.to_list()
 
         return self.official_dates
     
