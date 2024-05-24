@@ -2,6 +2,7 @@ import pandas as pd
 
 
 def get_simulation_prices(parameters, adm):
+
     conn = adm.connection
     query = f'''
     SELECT ap.date, aa.asset, ap.close
@@ -15,6 +16,8 @@ def get_simulation_prices(parameters, adm):
 
     df_pivot = df.pivot(index='date', columns='asset', values='close')
 
-    print(df_pivot)
+    #print(df_pivot)
 
-    return df
+    df_pivot.index = pd.to_datetime(df_pivot.index)
+
+    return df_pivot

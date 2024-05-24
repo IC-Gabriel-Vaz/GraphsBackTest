@@ -12,6 +12,7 @@ class Parameters:
         self.date2 = datetime.strptime(txt['date2'], "%Y-%m-%d")
         self.rebalance_frequency = int(txt['rebalance'])
         self.investment = int(txt['investment'])
+
         
 
     

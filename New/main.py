@@ -6,7 +6,7 @@ import argParse
 from admin import Admin
 from parameters import Parameters
 
-from get_sim_prices import get_simulation_prices
+import backtest as bt
 
 from data import Data
 
@@ -23,4 +23,9 @@ if __name__ == '__main__':
 
     data =  Data(parameters, adm)
 
-    print(data.prices)
+    print('******Starting Simulation****** \n')
+
+    bt.start_backtest(data,parameters)
+
+
+
