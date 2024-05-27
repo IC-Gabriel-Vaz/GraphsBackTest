@@ -21,6 +21,8 @@ class Data:
         self.in_Sample_assets = self.in_Sample_prices.columns
         self.out_of_Sample_assets = self.out_of_Sample_prices.columns
 
+        self.all_prices = self.combine_in_out_prices()
+
         self.rebalance_dates = self.get_rebalance_dates(parameters)
 
         end_time = time.time()
@@ -56,17 +58,22 @@ class Data:
 
         self.in_Sample_prices = self.prices.loc[self.in_Sample_dates]
 
-        self.in_Sample_prices = self.check_nan_prices(self.in_Sample_prices)
-
         return self.in_Sample_prices
     
     def get_out_of_Sample_prices(self):
 
         self.out_of_Sample_prices = self.prices.loc[self.out_of_Sample_dates]
 
-        self.out_of_Sample_prices = self.check_nan_prices(self.out_of_Sample_prices)
+        self.out_of_Sample_prices = self.out_of_Sample_prices.dropna(axis=1, how='all')
 
         return self.out_of_Sample_prices
+    
+    def combine_in_out_prices(self):
+
+        df_concat = pd.concat([self.in_Sample_prices, self.out_of_Sample_prices], axis=0)
+
+        return df_concat
+
 
     def check_nan_prices(self,prices):
 

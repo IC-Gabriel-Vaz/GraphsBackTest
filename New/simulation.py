@@ -19,7 +19,7 @@ class Simulation:
 
         weights = {}
 
-        assets = data.out_of_Sample_prices.columns
+        assets = data.all_prices.columns
 
         for asset in assets:
             weights[asset] = (1/len(assets))
@@ -28,9 +28,11 @@ class Simulation:
 
     def simulate(self,data):
 
+        print(f'Inicial investment: {self.portfolio_value} \n')
+
         for date in data.out_of_Sample_dates:
 
-            self.daily_price = data.out_of_Sample_prices.loc[date]
+            self.daily_price = data.all_prices.loc[date]
 
             if date in data.rebalance_dates:
 
@@ -45,7 +47,7 @@ class Simulation:
                     amount_per_asset[asset] = money_availble_per_asset
     
                 for asset, value in amount_per_asset.items():
-                    shares_per_asset = value/data.out_of_Sample_prices.iloc[0][asset]
+                    shares_per_asset = value/data.all_prices.iloc[0][asset]
                     self.shares[asset] = shares_per_asset
 
             self.portfolio_value = self.calculate_portfolio_value(self.daily_price)
