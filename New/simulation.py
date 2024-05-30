@@ -1,30 +1,12 @@
-import pandas
-
+import pandas as pd
 
 
 class Simulation:
 
     def __init__(self, data, parameters):
 
-        self.weights = self.get_first_weights(data)
         self.portfolio_value = parameters.investment
-        self.shares = dict((asset,0) for asset in data.out_of_Sample_assets
-)
-
-    
-    def get_first_weights(self,data):
-
-        # Aqui a ideia é que a regra de escolha fique a cargo do usuário
-        #equal weights de exemplo inicial
-
-        weights = {}
-
-        assets = data.all_prices.columns
-
-        for asset in assets:
-            weights[asset] = (1/len(assets))
-
-        return weights
+        self.shares = dict((asset,0) for asset in data.all_assets)
 
     def simulate(self,data):
 
@@ -37,22 +19,9 @@ class Simulation:
             if date in data.rebalance_dates:
 
                 print('**** rebalancing ******* \n')
+                print(self.get_rebalance_prices(data,date))
 
-                amount_per_asset = {}
-                
-                for asset, weight in self.weights.items():
-                 
-                    money_availble_per_asset = (self.portfolio_value)*(weight)
-                  
-                    amount_per_asset[asset] = money_availble_per_asset
-    
-                for asset, value in amount_per_asset.items():
-                    shares_per_asset = value/data.all_prices.iloc[0][asset]
-                    self.shares[asset] = shares_per_asset
-
-            self.portfolio_value = self.calculate_portfolio_value(self.daily_price)
-
-            print(f'{date}   {self.portfolio_value} \n')
+            # print(f'{date}   {self.portfolio_value} \n')
 
     def calculate_portfolio_value(self, prices):
 
@@ -61,6 +30,14 @@ class Simulation:
         for (asset,shares_per_asset), price in zip(self.shares.items(),prices):
             valuation = shares_per_asset*price
             portfolio_value += valuation
+
+    def get_rebalance_prices(self,data, date):
+
+        start_date = date - pd.Timedelta(days=100)
+        end_date = date - pd.Timedelta(days=1)
+
+        rebalance_prices = data.all_prices.loc[start_date:end_date]
+        return rebalance_prices
         
     
         return portfolio_value

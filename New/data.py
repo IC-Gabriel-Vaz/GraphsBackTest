@@ -12,14 +12,12 @@ class Data:
         start_time = time.time()
 
         self.prices  = gp.get_simulation_prices(parameters , adm)
-        self.all_assets = self.prices.columns
         self.official_dates = self.get_official_dates(parameters)
         self.in_Sample_dates, self.out_of_Sample_dates = self.get_in_out_Sample_dates(parameters)
 
-        self.in_Sample_prices = self.get_in_Sample_prices()
         self.out_of_Sample_prices = self.get_out_of_Sample_prices()
-        self.in_Sample_assets = self.in_Sample_prices.columns
-        self.out_of_Sample_assets = self.out_of_Sample_prices.columns
+        self.all_assets = self.out_of_Sample_prices.columns
+        self.in_Sample_prices = self.get_in_Sample_prices()
 
         self.all_prices = self.combine_in_out_prices()
 
@@ -49,14 +47,18 @@ class Data:
         except ValueError:
             index_date2 = min([i for i, date in enumerate(self.official_dates) if date > parameters.date2], default=len(self.official_dates))
 
-        self.in_Sample_dates = self.official_dates[:index_date1+1]
+        start_date = parameters.date1 - pd.Timedelta(days=100)
+
+        index_start_date = self.official_dates.index(start_date)
+
+        self.in_Sample_dates = self.official_dates[index_start_date:index_date1+1]
         self.out_of_Sample_dates = self.official_dates[index_date1+1:index_date2+1]
 
         return self.in_Sample_dates, self.out_of_Sample_dates
     
     def get_in_Sample_prices(self):
 
-        self.in_Sample_prices = self.prices.loc[self.in_Sample_dates]
+        self.in_Sample_prices = self.prices.loc[self.in_Sample_dates, self.all_assets]
 
         return self.in_Sample_prices
     
@@ -66,6 +68,7 @@ class Data:
 
         self.out_of_Sample_prices = self.out_of_Sample_prices.dropna(axis=1, how='all')
 
+
         return self.out_of_Sample_prices
     
     def combine_in_out_prices(self):
@@ -74,19 +77,6 @@ class Data:
 
         return df_concat
 
-
-    def check_nan_prices(self,prices):
-
-        columns_to_remove = prices.columns[prices.isna().sum() >= 0.5*len(prices)]
-        columns_to_remove.to_list()
-
-        for ativo in columns_to_remove:
-            del prices[ativo]
-
-        prices = prices.ffill()
-        prices =  prices.bfill()
-
-        return prices
 
     def get_rebalance_dates(self,parameters):
 
