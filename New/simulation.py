@@ -8,6 +8,7 @@ class Simulation:
         self.portfolio_value = parameters.investment
         self.shares = dict((asset,0) for asset in data.all_assets)
         self.weights = {asset: 0 for asset in data.all_assets}
+        self.valuation = {asset: 0 for asset in data.all_assets}
 
 
     def simulate(self,data):
@@ -16,15 +17,15 @@ class Simulation:
 
         for date in data.out_of_Sample_dates:
 
-            self.daily_price = data.all_prices.loc[date]
-
             if date in data.rebalance_dates:
 
                 print('**** rebalancing ******* \n')
                 
                 rebalance_prices = self.get_rebalance_prices(data,date)
 
-                self.rebalance(data,rebalance_prices)
+                weights , optmization_prices = self.rebalance(data,rebalance_prices)
+
+
 
             # print(f'{date}   {self.portfolio_value} \n')
 
@@ -35,6 +36,8 @@ class Simulation:
         for (asset,shares_per_asset), price in zip(self.shares.items(),prices):
             valuation = shares_per_asset*price
             portfolio_value += valuation
+        
+        return None
 
     def get_rebalance_prices(self,data, date):
 
@@ -42,6 +45,7 @@ class Simulation:
         end_date = date - pd.Timedelta(days=1)
 
         rebalance_prices = data.all_prices.loc[start_date:end_date]
+
         return rebalance_prices
     
     def rebalance(self, data, rebalance_prices):
@@ -54,15 +58,28 @@ class Simulation:
 
         optmization_prices = rebalance_prices.drop(columns=cols_with_many_nans)
 
+        removed_cols = []
+
+        for col in optmization_prices.columns:
+            if pd.isna(optmization_prices[col].iloc[0]):
+                removed_cols.append(col)
+                optmization_prices.drop(columns=[col], inplace=True)
+
+        optmization_prices.ffill()
+        optmization_prices.bfill()
+
         weights_dict = self.optmize(optmization_prices)
 
-        # print(type(self.weights))
+        for asset in self.weights.keys():
 
-        # for asset in self.weights.keys():
+            if asset in weights_dict.keys():
 
-        #     self.weights = weights_dict.get(asset,0)
+                self.weights[asset] = weights_dict[asset]
+            else:
 
-        # print(self.weights)
+                self.weights[asset] = 0
+
+        return self.weights
 
     def optmize(self,optmization_prices):
 
@@ -70,8 +87,6 @@ class Simulation:
 
         for asset in optmization_prices.columns:
 
-            new_weights[asset] = 1/len(optmization_prices)
-
-        print(new_weights)
+            new_weights[asset] = (1/len(optmization_prices.columns))
 
         return new_weights
