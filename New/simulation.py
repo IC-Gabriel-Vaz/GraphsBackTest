@@ -7,6 +7,8 @@ class Simulation:
 
         self.portfolio_value = parameters.investment
         self.shares = dict((asset,0) for asset in data.all_assets)
+        self.weights = {asset: 0 for asset in data.all_assets}
+
 
     def simulate(self,data):
 
@@ -19,7 +21,10 @@ class Simulation:
             if date in data.rebalance_dates:
 
                 print('**** rebalancing ******* \n')
-                print(self.get_rebalance_prices(data,date))
+                
+                rebalance_prices = self.get_rebalance_prices(data,date)
+
+                self.rebalance(data,rebalance_prices)
 
             # print(f'{date}   {self.portfolio_value} \n')
 
@@ -38,6 +43,35 @@ class Simulation:
 
         rebalance_prices = data.all_prices.loc[start_date:end_date]
         return rebalance_prices
-        
     
-        return portfolio_value
+    def rebalance(self, data, rebalance_prices):
+
+        total_rows = rebalance_prices.shape[0]
+
+        nan_counts = rebalance_prices.isna().sum()
+
+        cols_with_many_nans = nan_counts[nan_counts > total_rows*0.5].index
+
+        optmization_prices = rebalance_prices.drop(columns=cols_with_many_nans)
+
+        weights_dict = self.optmize(optmization_prices)
+
+        # print(type(self.weights))
+
+        # for asset in self.weights.keys():
+
+        #     self.weights = weights_dict.get(asset,0)
+
+        # print(self.weights)
+
+    def optmize(self,optmization_prices):
+
+        new_weights = {}
+
+        for asset in optmization_prices.columns:
+
+            new_weights[asset] = 1/len(optmization_prices)
+
+        print(new_weights)
+
+        return new_weights

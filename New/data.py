@@ -19,7 +19,7 @@ class Data:
         self.all_assets = self.out_of_Sample_prices.columns
         self.in_Sample_prices = self.get_in_Sample_prices()
 
-        self.all_prices = self.combine_in_out_prices()
+        self.all_prices = self.combine_in_out_prices() # All prices used in simulation
 
         self.rebalance_dates = self.get_rebalance_dates(parameters)
 
