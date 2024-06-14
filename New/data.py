@@ -48,8 +48,11 @@ class Data:
             index_date2 = min([i for i, date in enumerate(self.official_dates) if date > parameters.date2], default=len(self.official_dates))
 
         start_date = parameters.date1 - pd.Timedelta(days=100)
-
-        index_start_date = self.official_dates.index(start_date)
+        
+        try:
+            index_start_date = self.official_dates.index(start_date)
+        except ValueError:
+            index_start_date = max([i for i, date in enumerate(self.official_dates) if date < start_date], default=-1)
 
         self.in_Sample_dates = self.official_dates[index_start_date:index_date1+1]
         self.out_of_Sample_dates = self.official_dates[index_date1+1:index_date2+1]

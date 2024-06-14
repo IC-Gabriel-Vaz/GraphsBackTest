@@ -9,11 +9,18 @@ class Simulation:
         self.shares = dict((asset,0) for asset in data.all_assets)
         self.weights = {asset: 0 for asset in data.all_assets}
         self.valuation = {asset: 0 for asset in data.all_assets}
+        self.proportion = {asset: 0 for asset in data.all_assets}
 
 
     def simulate(self,data):
 
+        prices = data.all_prices
+
         print(f'Inicial investment: {self.portfolio_value} \n')
+
+        prices.ffill(inplace=True)
+        
+        prices.bfill(inplace=True)
 
         for date in data.out_of_Sample_dates:
 
@@ -23,21 +30,29 @@ class Simulation:
                 
                 rebalance_prices = self.get_rebalance_prices(data,date)
 
-                weights , optmization_prices = self.rebalance(data,rebalance_prices)
+                weights  = self.rebalance(data,rebalance_prices)
 
+                rebalance_proportion = {asset: 0 for asset in data.all_assets}
 
+                for asset in data.all_assets:
+                    rebalance_proportion[asset] = self.portfolio_value*weights[asset]
+                
+                for asset in data.all_assets:
+                    self.shares[asset] = rebalance_proportion[asset]/prices[asset].loc[date]
+            
+            self.portfolio_value = self.calculate_portfolio_value(prices.loc[date])
 
-            # print(f'{date}   {self.portfolio_value} \n')
+            print(f'{date}  {self.portfolio_value} \n')
+
+        
 
     def calculate_portfolio_value(self, prices):
 
-        portfolio_value = 0
-
         for (asset,shares_per_asset), price in zip(self.shares.items(),prices):
-            valuation = shares_per_asset*price
-            portfolio_value += valuation
+            self.valuation[asset] = shares_per_asset*price
+            self.portfolio_value = sum(self.valuation.values())
         
-        return None
+        return self.portfolio_value
 
     def get_rebalance_prices(self,data, date):
 
