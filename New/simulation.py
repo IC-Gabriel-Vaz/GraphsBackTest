@@ -26,11 +26,13 @@ class Simulation:
 
             if date in data.rebalance_dates:
 
-                print('**** rebalancing ******* \n')
+                print('************ rebalancing ************ \n')
                 
                 rebalance_prices = self.get_rebalance_prices(data,date)
 
                 weights  = self.rebalance(data,rebalance_prices)
+
+                print(len(weights))
 
                 rebalance_proportion = {asset: 0 for asset in data.all_assets}
 
@@ -43,8 +45,7 @@ class Simulation:
             self.portfolio_value = self.calculate_portfolio_value(prices.loc[date])
 
             print(f'{date}  {self.portfolio_value} \n')
-
-        
+            
 
     def calculate_portfolio_value(self, prices):
 
@@ -69,7 +70,7 @@ class Simulation:
 
         nan_counts = rebalance_prices.isna().sum()
 
-        cols_with_many_nans = nan_counts[nan_counts > total_rows*0.5].index
+        cols_with_many_nans = nan_counts[nan_counts > total_rows*0.2].index
 
         optmization_prices = rebalance_prices.drop(columns=cols_with_many_nans)
 
@@ -79,6 +80,7 @@ class Simulation:
             if pd.isna(optmization_prices[col].iloc[0]):
                 removed_cols.append(col)
                 optmization_prices.drop(columns=[col], inplace=True)
+
 
         optmization_prices.ffill()
         optmization_prices.bfill()
@@ -98,10 +100,14 @@ class Simulation:
 
     def optmize(self,optmization_prices):
 
+        returns = optmization_prices.pct_change().dropna()
+        #print(returns)
+
         new_weights = {}
+
 
         for asset in optmization_prices.columns:
 
-            new_weights[asset] = (1/len(optmization_prices.columns))
+            new_weights[asset] = round((1/len(optmization_prices.columns)) , 8)
 
         return new_weights

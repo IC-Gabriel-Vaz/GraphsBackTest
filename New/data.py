@@ -31,7 +31,7 @@ class Data:
     def get_official_dates(self,parameters):
 
         if parameters.app == 'IBOV':
-            official_dates = self.prices.dropna(subset=['BOVA11']).loc[:parameters.date2].index.to_list()
+            official_dates = self.prices.dropna(subset=['IBOVFUT']).loc[:parameters.date2].index.to_list()
 
         return official_dates
     
