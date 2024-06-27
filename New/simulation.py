@@ -7,9 +7,13 @@ class Simulation:
 
         self.portfolio_value = parameters.investment
         self.shares = dict((asset,0) for asset in data.all_assets)
-        self.weights = {asset: 0 for asset in data.all_assets}
+        self.rebalance_weights = {asset: 0 for asset in data.all_assets}
         self.valuation = {asset: 0 for asset in data.all_assets}
         self.proportion = {asset: 0 for asset in data.all_assets}
+        self.portfolio_weights = {asset: 0 for asset in data.all_assets}
+        self.weights_history = pd.DataFrame()
+        self.shares_history = pd.DataFrame()
+        self.valuation_history = pd.DataFrame()
 
 
     def simulate(self,data):
@@ -32,8 +36,6 @@ class Simulation:
 
                 weights  = self.rebalance(data,rebalance_prices)
 
-                print(len(weights))
-
                 rebalance_proportion = {asset: 0 for asset in data.all_assets}
 
                 for asset in data.all_assets:
@@ -42,10 +44,16 @@ class Simulation:
                 for asset in data.all_assets:
                     self.shares[asset] = rebalance_proportion[asset]/prices[asset].loc[date]
             
-            self.portfolio_value = self.calculate_portfolio_value(prices.loc[date])
 
-            print(f'{date}  {self.portfolio_value} \n')
             
+            self.portfolio_value = self.calculate_portfolio_value(prices.loc[date])
+            self.portfolio_weights = self.calculate_portfolio_weights(prices.loc[date])
+            self.weights_history = self.weights_history._append(pd.DataFrame(self.portfolio_weights , index=[date]))
+            self.shares_history = self.shares_history._append(pd.DataFrame(self.shares , index=[date]))
+            self.valuation_history = self.valuation_history._append(pd.DataFrame(self.valuation, index=[date]))
+            print(f'{date}  {self.portfolio_value} \n')
+
+        print(self.valuation_history)
 
     def calculate_portfolio_value(self, prices):
 
@@ -87,16 +95,16 @@ class Simulation:
 
         weights_dict = self.optmize(optmization_prices)
 
-        for asset in self.weights.keys():
+        for asset in self.rebalance_weights.keys():
 
             if asset in weights_dict.keys():
 
-                self.weights[asset] = weights_dict[asset]
+                self.rebalance_weights[asset] = weights_dict[asset]
             else:
 
-                self.weights[asset] = 0
+                self.rebalance_weights[asset] = 0
 
-        return self.weights
+        return self.rebalance_weights
 
     def optmize(self,optmization_prices):
 
@@ -108,6 +116,15 @@ class Simulation:
 
         for asset in optmization_prices.columns:
 
-            new_weights[asset] = round((1/len(optmization_prices.columns)) , 8)
+            new_weights[asset] = (1/len(optmization_prices.columns))
 
         return new_weights
+    
+    def calculate_portfolio_weights(self, prices):
+
+        portfolio_weights = {}
+
+        for asset in self.valuation.keys():
+            portfolio_weights[asset] = self.valuation[asset]/self.portfolio_value
+
+        return portfolio_weights
