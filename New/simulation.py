@@ -43,6 +43,8 @@ class Simulation:
                 
                 for asset in data.all_assets:
                     self.shares[asset] = rebalance_proportion[asset]/prices[asset].loc[date]
+
+                print(weights)
             
 
             
@@ -51,9 +53,9 @@ class Simulation:
             self.weights_history = self.weights_history._append(pd.DataFrame(self.portfolio_weights , index=[date]))
             self.shares_history = self.shares_history._append(pd.DataFrame(self.shares , index=[date]))
             self.valuation_history = self.valuation_history._append(pd.DataFrame(self.valuation, index=[date]))
-            print(f'{date}  {self.portfolio_value} \n')
+            print(f'{date}  {self.portfolio_value:.2f} \n')
 
-        print(self.valuation_history)
+        #print(self.valuation_history)
 
     def calculate_portfolio_value(self, prices):
 
@@ -115,8 +117,13 @@ class Simulation:
 
 
         for asset in optmization_prices.columns:
+            lista =  ['ABEV3', 'ALOS3' ,'ALPA4' ,'AMER3', 'ARZZ3']
+            if asset in lista:
+                new_weights[asset] = 0.2#self.valuation[asset]/self.portfolio_value
+            else:
+                new_weights[asset] = 0
 
-            new_weights[asset] = (1/len(optmization_prices.columns))
+            #new_weights[asset] = (1/len(optmization_prices.columns))
 
         return new_weights
     
@@ -124,7 +131,10 @@ class Simulation:
 
         portfolio_weights = {}
 
+        lista =  ['ABEV3', 'ALOS3' ,'ALPA4' ,'AMER3', 'ARZZ3']
         for asset in self.valuation.keys():
-            portfolio_weights[asset] = self.valuation[asset]/self.portfolio_value
-
+            if asset in lista:
+                portfolio_weights[asset] = 0.2#self.valuation[asset]/self.portfolio_value
+            else:
+                portfolio_weights[asset] = 0
         return portfolio_weights
