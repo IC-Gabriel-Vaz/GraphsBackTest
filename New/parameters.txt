@@ -5,3 +5,4 @@ date2 = 2020-01-30
 inSample = 500
 rebalance = 10
 investment = 100000
+transactionCosts = 0.0005

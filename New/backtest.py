@@ -1,4 +1,6 @@
 from simulation import Simulation
+from tcSimulation import TCSimulation
+
 import time
 
 
@@ -6,9 +8,17 @@ def start_backtest(data,parameters):
 
     start_time= time.time()
 
-    simulation = Simulation(data,parameters)
+    if parameters.transactionCosts == 0:
 
-    simulation.simulate(data)
+        simulation = Simulation(data,parameters)
+
+        simulation.simulate(data)
+    
+    else:
+
+        simulation = TCSimulation(data,parameters)
+
+        simulation.simulate(data,parameters)
 
     end_time = time.time()
     

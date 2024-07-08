@@ -13,6 +13,7 @@ class Parameters:
         self.inSample = int(txt['inSample'])
         self.rebalance_frequency = int(txt['rebalance'])
         self.investment = int(txt['investment'])
+        self.transactionCosts  = float(txt['transactionCosts'])
 
         
 

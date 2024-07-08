@@ -1,7 +1,6 @@
 import pandas as pd
 
-
-class Simulation:
+class TCSimulation:
 
     def __init__(self, data, parameters):
 
@@ -11,6 +10,7 @@ class Simulation:
         self.valuation = {asset: 0 for asset in data.all_assets}
         self.proportion = {asset: 0 for asset in data.all_assets}
         self.portfolio_weights = {asset: 0 for asset in data.all_assets}
+
         self.weights_history = pd.DataFrame()
         self.shares_history = pd.DataFrame()
         self.valuation_history = pd.DataFrame()
@@ -18,7 +18,7 @@ class Simulation:
         self.start_day = data.out_of_Sample_dates[0]
 
 
-    def simulate(self,data):
+    def simulate(self,data,parameters):
 
         prices = data.all_prices
 
@@ -30,7 +30,7 @@ class Simulation:
 
         for date in data.out_of_Sample_dates:
 
-            self.portfolio_value = self.calculate_portfolio_value(prices.loc[date] , date)
+            self.portfolio_value = self.calculate_portfolio_value(prices.loc[date] , date,parameters)
 
             if date in data.rebalance_dates:
 
@@ -43,12 +43,12 @@ class Simulation:
                 rebalance_proportion = {asset: 0 for asset in data.all_assets}
 
                 for asset in data.all_assets:
-                    rebalance_proportion[asset] = self.portfolio_value*weights[asset]
+                    rebalance_proportion[asset] = self.portfolio_value*weights[asset] - self.portfolio_value*weights[asset]*parameters.transactionCosts
                 
                 for asset in data.all_assets:
                     self.shares[asset] = rebalance_proportion[asset]/prices[asset].loc[date]
 
-            self.portfolio_value = self.calculate_portfolio_value(prices.loc[date], date)
+            self.portfolio_value = self.calculate_portfolio_value(prices.loc[date], date, parameters)
             self.portfolio_weights = self.calculate_portfolio_weights(prices.loc[date])
             self.weights_history = self.weights_history._append(pd.DataFrame(self.portfolio_weights , index=[date]))
             self.shares_history = self.shares_history._append(pd.DataFrame(self.shares , index=[date]))
@@ -59,10 +59,11 @@ class Simulation:
         # print(self.weights_history)
         # print(self.shares_history)
 
-    def calculate_portfolio_value(self, prices, date):
+    def calculate_portfolio_value(self, prices, date,parameters):
 
         if date == self.start_day:
-            self.portfolio_value = self.portfolio_value
+            self.portfolio_value = parameters.investment - self.portfolio_value*parameters.transactionCosts
+
         else:
             for (asset,shares_per_asset), price in zip(self.shares.items(),prices):
                 self.valuation[asset] = shares_per_asset*price
@@ -137,3 +138,4 @@ class Simulation:
             self.valuation[asset]/self.portfolio_value
 
         return portfolio_weights
+    
