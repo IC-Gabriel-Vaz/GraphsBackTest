@@ -18,7 +18,7 @@ class Simulation:
         self.start_day = data.out_of_Sample_dates[0]
 
 
-    def simulate(self,data):
+    def simulate(self,data,parameters):
 
         prices = data.all_prices
 
@@ -36,7 +36,7 @@ class Simulation:
 
                 print('************ rebalancing ************ \n')
                 
-                rebalance_prices = self.get_rebalance_prices(data,date)
+                rebalance_prices = self.get_rebalance_prices(data,date, parameters           )
 
                 weights  = self.rebalance(data,rebalance_prices)
 
@@ -72,9 +72,9 @@ class Simulation:
         
         return self.portfolio_value
 
-    def get_rebalance_prices(self,data, date):
+    def get_rebalance_prices(self,data, date, parameters):
 
-        start_date = date - pd.Timedelta(days=100)
+        start_date = date - pd.Timedelta(days=parameters.inSample)
         end_date = date - pd.Timedelta(days=1)
 
         rebalance_prices = data.all_prices.loc[start_date:end_date]
