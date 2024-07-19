@@ -47,7 +47,7 @@ class Data:
         except ValueError:
             index_date2 = min([i for i, date in enumerate(self.official_dates) if date > parameters.date2], default=len(self.official_dates))
 
-        start_date = parameters.date1 - pd.Timedelta(days=100)
+        start_date = parameters.date1 - pd.Timedelta(days=parameters.inSample)
         
         try:
             index_start_date = self.official_dates.index(start_date)
