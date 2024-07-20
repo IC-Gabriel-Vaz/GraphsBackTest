@@ -1,6 +1,5 @@
 import pandas as pd
 
-
 class Simulation:
 
     def __init__(self, data, parameters):
@@ -28,6 +27,7 @@ class Simulation:
         
         prices.bfill(inplace=True)
 
+
         for date in data.out_of_Sample_dates:
 
             self.portfolio_value = self.calculate_portfolio_value(prices.loc[date] , date)
@@ -36,7 +36,7 @@ class Simulation:
 
                 print('************ rebalancing ************ \n')
                 
-                rebalance_prices = self.get_rebalance_prices(data,date, parameters           )
+                rebalance_prices = self.get_rebalance_prices(data,date, parameters)
 
                 weights  = self.rebalance(data,rebalance_prices)
 
@@ -55,9 +55,12 @@ class Simulation:
             self.valuation_history = self.valuation_history._append(pd.DataFrame(self.valuation, index=[date]))
             print(f'{date}  {self.portfolio_value:.2f} \n')
 
+            
+
         # print(self.valuation_history)
         # print(self.weights_history)
         # print(self.shares_history)
+
 
     def calculate_portfolio_value(self, prices, date):
 
