@@ -9,6 +9,8 @@ class TCSimulation:
         self.shares = dict((asset,0) for asset in data.all_assets)
         self.rebalance_weights = {asset: 0 for asset in data.all_assets}
 
+        self.cash = 0  ## operacional costs
+
         self.start_day = data.out_of_Sample_dates[0]
         
     def simulate(self, data, parameters):
@@ -52,17 +54,27 @@ class TCSimulation:
                     for asset in data.all_assets:
                         shares_before[asset] = self.shares[asset]
                         self.shares[asset] = rebalance_proportion[asset]/prices[asset].loc[date]
-                        print(f'{asset}: Had {shares_before[asset]} bought {self.shares[asset]:.2f} at {prices[asset].loc[date]:.2f}')
+                        #print(f'{asset}: Had {shares_before[asset]} bought {self.shares[asset]:.2f} at {prices[asset].loc[date]:.2f}')
 
                 else:
 
-                    print('Today is a Rebalance day, some trades will be executed')
+                    print('Today is a Rebalance day, some trades will be executed \n')
+                    #print(f'Currently position: {self.shares} \n')
+                    new_shares = dict((asset,0) for asset in data.all_assets)
+                    for asset in data.all_assets:
+                        rebalance_proportion[asset] = weights[asset]*self.portfolioValue/(1+parameters.transactionCosts)
+                        new_shares[asset] = rebalance_proportion[asset]/prices[asset].loc[date]
+                        print(f'OPEN ORDER for {asset}: BUY  {(new_shares[asset]-self.shares[asset]):.2f} shares at {prices[asset].loc[date]} \n' if new_shares[asset]>self.shares[asset] else f'OPEN ORDER for {asset}: SELL {(self.shares[asset]-new_shares[asset]):.2f} shares at {prices[asset].loc[date]} \n')
+                    
+                    self.executeTrades(new_shares,prices.loc[date], data)
+
 
 
     def calculate_potfolioValue(self,prices,date):
 
         if date == self.start_day:
             self.portfolioValue = self.portfolioValue
+
 
         return self.portfolioValue
             
@@ -126,3 +138,13 @@ class TCSimulation:
 
         return new_weights
     
+    def executeTrades(self,new_shares,prices,data):
+
+        #this function should implement the trading model
+
+        old_shares = self.shares
+        self.shares = new_shares
+        print(f'Trades executade. New position:\n')
+        for asset in data.all_assets:
+            print(f'{asset}: had {old_shares[asset] :.2f}  BOUGHT {(self.shares[asset] - old_shares[asset]):.2f} has {self.shares[asset]:.2f}' if self.shares[asset] > old_shares[asset] else f'{asset}: had {old_shares[asset] :.2f}   SOLD  {(old_shares[asset] - self.shares[asset]):.2f} has {self.shares[asset] :.2f}')
+        return  None
